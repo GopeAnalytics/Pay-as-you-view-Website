@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f9f4ef;
+            color: #5c1212;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #5c1212;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #d74444;
+        }
+
+        .footer {
+            background-color: #5c1212;
+            color: #fff;
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: #f9f4ef;
+            border-radius: 50%;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #fff;
+            margin: 0.5rem 1rem;
+            font-weight: bold;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .newsletter {
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter input[type="email"] {
+            padding: 0.5rem;
+            width: 200px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            background-color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #5c1212;
+        }
+
+        .newsletter button:hover {
+            background-color: #d74444;
+            color: #fff;
+        }
+
+        .paypal-button {
+            margin-top: 1rem;
+        }
+
+        .paypal-button img {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>Pay Page</h1>
+       
+    </nav>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">Safe</a>
+            <a href="#">Secured </a>
+            <a href="#">Trustable</a>
+            
+        </div>
+
+        <div class="newsletter">
+            <label for="email">Put your email to receive a code after payment</label><br>
+            <input type="email" id="email" placeholder="email">
+            <button>></button>
+        </div>
+
+        <div class="paypal-button">
+            <a href="https://www.paypal.com/pay">
+                <img src="https://www.paypalobjects.com/en_US/i/btn/btn_paynowCC_LG.gif" alt="Pay with PayPal">
+            </a>
+        </div>
+        
+                <style>
+                    .helcim-button a {
+                        display: inline-flex;
+                        align-items: center;
+                        background-color: #4B9CD3;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        text-decoration: none;
+                        color: white;
+                        font-weight: bold;
+                    }
+                    .helcim-button img {
+                        height: 30px;
+                        margin-left: 10px;
+                    }
+                    </style>
+                    
+                    <div class="helcim-button">
+                        <a href="https://commerce.helcim.com/payment/your-custom-payment-link" target="_blank">
+                            Pay with Helcim
+                        </a>
+                    </div>
+                    
+        </div>
+    </footer>
+
+</body>
+</html>
