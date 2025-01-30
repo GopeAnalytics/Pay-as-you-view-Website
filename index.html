@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track260</title>
+    <style>
+        /* Reset and general styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #ada8a8;
+            color: #333;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #003366; 
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Main wrapper to push footer to the bottom */
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('hero-image.jpg') no-repeat center center/cover;
+            padding: 80px 20px;
+            color: white;
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta {
+            padding: 12px 20px;
+            background-color: #ff6600;
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .cta:hover {
+            background-color: #cc5200;
+        }
+
+        /* Programs Section */
+        .featured-programs {
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+            width: 100%;
+        }
+
+        .programs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .program {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Zoning Area Box */
+        .calculator-box {
+            background-color: orange;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+        }
+
+        .calculator-box h1 {
+            text-align: center;
+        }
+
+        .carousel-container {
+            position: relative;
+            margin-top: 20px;
+            overflow: hidden;
+            height: 200px;
+            text-align: center;
+        }
+
+        .carousel-item {
+            display: none;
+            padding: 20px;
+            background-color: #ffcc66;
+            border-radius: 10px;
+            color: black;
+        }
+
+        .carousel-item.active {
+            display: block;
+            animation: fade-in 1s;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+        .main-footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .main-footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .main-footer a:hover {
+            text-decoration: underline;
+            color: #ffd700;
+        }header {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100px; /* Adjust height as needed */
+    text-align: center;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header style="text-align: center;">
+        <h1>Troy Track Company</h1>
+    </header>
+    
+
+    <!-- Main Content Wrapper -->
+    <div class="wrapper">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Welcome to Track260 Videos</h1>
+            <p>We start from here</p>
+            <a href="sign.html" class="cta">Pay to watch Now</a>
+        </section>
+
+        <!-- Featured Programs Section -->
+        <section class="featured-programs">
+            <h2>Our Programs and Videos</h2>
+            <div class="programs-container">
+                <div class="program">
+                    <h3>Chain</h3>
+                    <p>Display all the necessary videos you need.</p>
+                </div>
+                <div class="program">
+                    <h3>Education</h3>
+                    <p>Gain knowledge and skills of tracking.</p>
+                </div>
+                <div class="program">
+                    <h3>Accounting</h3>
+                    <p>Help you prepare to overcome financial crises.</p>
+                </div> <div class="program">
+                    <h3>Give Back</h3>
+                    <p>Bring a friend to learn also.</p>
+                </div>
+            </div>
+        </section>
+
+       
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2025 Track260. All rights reserved.</p>
+        <p>
+            <a href="sign.html">Sign In</a> | 
+            <a href="index.html">Back Page</a> | 
+            <a href="sign.html">Sign Up</a>
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    
+    </script>
+</body>
+</html>
