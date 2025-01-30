@@ -14,7 +14,9 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure the body takes up the full viewport height */
         }
         header {
             background-color: #003366;
@@ -36,6 +38,7 @@
             flex-wrap: wrap;
             justify-content: center;
             padding: 20px;
+            flex-grow: 1; /* Allow video container to grow and push footer to the bottom */
         }
         .video-box {
             background: white;
@@ -80,40 +83,41 @@
         }
         .reply-box {
             margin-left: 20px;
-        } .main-footer {
-    background-color: #003366; /* Dark blue background */
-    color: white; /* White text color */
-    text-align: center; /* Center align text */
-    padding: 20px 10px; /* Add padding for spacing */
-    font-size: 0.9rem; /* Adjust font size for readability */
-    margin-top: 30px; /* Add space above footer */
-}
+        }
+        .main-footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
 
-.main-footer a {
-    color: #ffcc00; /* Bright yellow link color for contrast */
-    text-decoration: none; /* Remove underline from links */
-    font-weight: bold; /* Make links bold */
-    margin: 0 5px; /* Add space between links */
-}
+        .main-footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 5px;
+        }
 
-.main-footer a:hover {
-    text-decoration: underline; /* Add underline on hover */
-    color: #ffd700; /* Slightly brighter yellow on hover */
-}
+        .main-footer a:hover {
+            text-decoration: underline;
+            color: #ffd700;
+        }
 
-.main-footer p {
-    margin: 10px 0; /* Add spacing between paragraphs */
-}
+        .main-footer p {
+            margin: 10px 0;
+        }
 
-.main-footer p a {
-    display: inline-block; /* Inline-block for better spacing */
-}
+        .main-footer p a {
+            display: inline-block;
+        }
 
-    header {
-        flex-direction: column; /* Stack logo and navigation */
-        align-items: center;
-        text-align: center;
-    }
+        header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -123,6 +127,7 @@
     <button class="upload-btn" onclick="verifyAdmin()">Upload Video</button>
     <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
     <div class="video-container" id="videoContainer"></div>
+
     <script>
         function verifyAdmin() {
             let adminCode = prompt("Enter Admin Code:");
@@ -200,15 +205,15 @@
             replyInput.focus();
         }
     </script>
-   <!-- Footer -->
 
-  <footer class="main-footer">
-    <p>&copy; 2025 Track260. All rights reserved.</p>
-    <p>
-        <a href="sign.html">Sign In</a> | 
-        <a href="index.html">Back Page</a> | 
-        <a href="sign.html">Sign Up</a>
-    </p>
-</footer>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2025 Track260. All rights reserved.</p>
+        <p>
+            <a href="sign.html">Sign In</a> | 
+            <a href="index.html">Back Page</a> | 
+            <a href="sign.html">Sign Up</a>
+        </p>
+    </footer>
 </body>
 </html>
