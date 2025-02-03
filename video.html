@@ -124,67 +124,58 @@
     <header>
         <h1>Tracking Videos and PDF's Platform</h1>
     </header>
-    <button class="upload-btn" onclick="verifyAdmin()">Upload Video</button>
-    <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
     <div class="video-container" id="videoContainer"></div>
 
     <script>
-        function verifyAdmin() {
-            let adminCode = prompt("Enter Admin Code:");
-            if (adminCode === "260260") {
-                document.getElementById('videoUpload').click();
-            } else {
-                alert("Incorrect Admin Code!");
+        const totalVideos = 260; // Number of videos (v001 to v260)
+
+        function loadVideos() {
+            const videoContainer = document.getElementById('videoContainer');
+
+            for (let i = 1; i <= totalVideos; i++) {
+                const videoId = `v${String(i).padStart(3, '0')}`; // Generate video ID (e.g., v001, v002)
+                const videoSrc = `${videoId}.mp4`; // Video file path
+                const description = `Video ${i}: Description for ${videoId}`; // Sample description
+
+                const videoBox = document.createElement('div');
+                videoBox.className = 'video-box';
+                videoBox.innerHTML = `
+                    <video controls src="${videoSrc}"></video>
+                    <p class="description">${description}</p>
+                    <div class="comment-box">
+                        <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this)">
+                        <button onclick="handleCommentButton(this)">➡️</button>
+                    </div>
+                    <div class="comments"></div>
+                `;
+                videoContainer.appendChild(videoBox);
             }
         }
-        
-        function handleVideoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            let description = prompt("Enter video description:");
-            if (!description) description = "No description provided.";
-            
-            const videoURL = URL.createObjectURL(file);
-            
-            const videoBox = document.createElement("div");
-            videoBox.className = "video-box";
-            videoBox.innerHTML = `
-                <video controls src="${videoURL}"></video>
-                <p class="description">${description}</p>
-                <div class="comment-box">
-                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this)">
-                    <button onclick="handleCommentButton(this)">➡️</button>
-                </div>
-                <div class="comments"></div>
-            `;
-            document.getElementById("videoContainer").appendChild(videoBox);
-        }
-        
+
         function handleComment(event, inputElement) {
             if (event.key === "Enter") {
                 postComment(inputElement);
             }
         }
-        
+
         function handleCommentButton(buttonElement) {
             const inputElement = buttonElement.previousElementSibling;
             postComment(inputElement);
         }
-        
+
         function postComment(inputElement) {
             const text = inputElement.value.trim();
             if (!text) return;
-            
+
             const commentContainer = inputElement.closest(".video-box").querySelector(".comments");
             const commentDiv = document.createElement("div");
             commentDiv.className = "comment";
             commentDiv.innerHTML = `${text} <button onclick="replyToComment(this)">↩️ Reply</button>`;
             commentContainer.appendChild(commentDiv);
-            
+
             inputElement.value = "";
         }
-        
+
         function replyToComment(button) {
             const replyInput = document.createElement("input");
             replyInput.placeholder = "Reply...";
@@ -192,11 +183,11 @@
                 if (event.key === "Enter") {
                     const replyText = replyInput.value.trim();
                     if (!replyText) return;
-                    
+
                     const replyDiv = document.createElement("div");
                     replyDiv.className = "comment reply-box";
                     replyDiv.textContent = replyText;
-                    
+
                     button.parentNode.appendChild(replyDiv);
                     replyInput.remove();
                 }
@@ -204,13 +195,16 @@
             button.parentNode.appendChild(replyInput);
             replyInput.focus();
         }
+
+        // Load videos on page load
+        window.onload = loadVideos;
     </script>
 
    <!-- Footer -->
    <footer class="main-footer">
     <p>&copy; 2025 Track260. All rights reserved.</p>
     <p>
-        <a href="pay.html">Pay</a> | 
+        <a href="Pay.html">Pay</a> | 
         <a href="index.html">Back Page</a> | 
         <a href="sign.html">Watch</a>
     </p>
