@@ -103,19 +103,94 @@
     <header>
       <h1>Tracking Videos and PDFs Platform</h1>
     </header>
-    
-    <!-- Upload button (Visible only to admins) -->
-    <button id="uploadBtn" class="upload-btn">Upload Video</button>
-    <input type="file" id="videoUpload" accept="video/*" style="display: none" />
-
-    <!-- Video Container -->
+    <button class="upload-btn" onclick="verifyAdmin()">Upload Video</button>
+    <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
     <div class="video-container" id="videoContainer"></div>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-      <p>&copy; 2025 Track260. All rights reserved.</p>
-      <p>
-        <a href="pay.html">Pay</a> | <a href="index.html">Back Page</a> |
+    <script>
+        function verifyAdmin() {
+            let adminCode = prompt("Enter Admin Code:");
+            if (adminCode === "260260") {
+                document.getElementById('videoUpload').click();
+            } else {
+                alert("Incorrect Admin Code!");
+            }
+        }
+        
+        function handleVideoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            let description = prompt("Enter video description:");
+            if (!description) description = "No description provided.";
+            
+            const videoURL = URL.createObjectURL(file);
+            
+            const videoBox = document.createElement("div");
+            videoBox.className = "video-box";
+            videoBox.innerHTML = `
+                <video controls src="${videoURL}"></video>
+                <p class="description">${description}</p>
+                <div class="comment-box">
+                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this)">
+                    <button onclick="handleCommentButton(this)">➡️</button>
+                </div>
+                <div class="comments"></div>
+            `;
+            document.getElementById("videoContainer").appendChild(videoBox);
+        }
+        
+        function handleComment(event, inputElement) {
+            if (event.key === "Enter") {
+                postComment(inputElement);
+            }
+        }
+        
+        function handleCommentButton(buttonElement) {
+            const inputElement = buttonElement.previousElementSibling;
+            postComment(inputElement);
+        }
+        
+        function postComment(inputElement) {
+            const text = inputElement.value.trim();
+            if (!text) return;
+            
+            const commentContainer = inputElement.closest(".video-box").querySelector(".comments");
+            const commentDiv = document.createElement("div");
+            commentDiv.className = "comment";
+            commentDiv.innerHTML = `${text} <button onclick="replyToComment(this)">↩️ Reply</button>`;
+            commentContainer.appendChild(commentDiv);
+            
+            inputElement.value = "";
+        }
+        
+        function replyToComment(button) {
+            const replyInput = document.createElement("input");
+            replyInput.placeholder = "Reply...";
+            replyInput.onkeypress = function(event) {
+                if (event.key === "Enter") {
+                    const replyText = replyInput.value.trim();
+                    if (!replyText) return;
+                    
+                    const replyDiv = document.createElement("div");
+                    replyDiv.className = "comment reply-box";
+                    replyDiv.textContent = replyText;
+                    
+                    button.parentNode.appendChild(replyDiv);
+                    replyInput.remove();
+                }
+            };
+            button.parentNode.appendChild(replyInput);
+            replyInput.focus();
+        }
+    </script>
+
+   <!-- Footer -->
+   <footer class="main-footer">
+    <p>&copy; 2025 Track260. All rights reserved.</p>
+    <p>
+        <a href="pay.html">Pay</a> | 
+        <a href="index.html">Back Page</a> | 
         <a href="sign.html">Watch</a>
       </p>
     </footer>
