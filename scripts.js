@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //  Sign-In Button Click
-  const signInButton = document.getElementById("user-sign-in-btn"); 
+  const signInButton = document.getElementById("user-sign-in-btn");
   if (signInButton) {
     signInButton.addEventListener("click", () => verifySignIn());
   }
@@ -22,38 +22,39 @@ async function processPayment() {
   const email = document.getElementById("email").value.trim();
 
   if (!email) {
-      alert("Please enter your email to proceed with the payment.");
-      return;
+    alert("Please enter your email to proceed with the payment.");
+    return;
   }
 
   try {
-      const response = await fetch("http://localhost:5000/api/create-checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-      });
-
-      const result = await response.json();
-
-      if (result.url) {
-          window.location.href = result.url; 
-      } else {
-          alert("Payment session creation failed.");
+    const response = await fetch(
+      "http://localhost:5000/api/create-checkout-session",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       }
+    );
+
+    const result = await response.json();
+
+    if (result.url) {
+      window.location.href = result.url;
+    } else {
+      alert("Payment session creation failed.");
+    }
   } catch (error) {
-      console.error("Payment Error:", error);
-      alert("Payment failed. Please try again.");
+    console.error("Payment Error:", error);
+    alert("Payment failed. Please try again.");
   }
 }
 
-
-
 //  Function to Verify Sign-In (User)
 async function verifySignIn() {
-  const email = document.getElementById("user-email").value.trim(); 
-  const otp = document.getElementById("user-otp").value.trim(); 
+  const email = document.getElementById("user-email").value.trim();
+  const otp = document.getElementById("user-otp").value.trim();
 
-  console.log("Sign-In Attempt:", email, otp); 
+  console.log("Sign-In Attempt:", email, otp);
   if (!email || !otp) {
     alert("Please enter your email and See Code.");
     return;
@@ -70,7 +71,7 @@ async function verifySignIn() {
     console.log("Server Response:", result);
     if (response.ok) {
       sessionStorage.setItem("userEmail", email);
-      window.location.href = "video.html"; 
+      window.location.href = "video.html";
     } else {
       alert("Invalid See Code or Email.");
     }
@@ -99,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
   triggerInput.setAttribute("type", "text");
   triggerInput.setAttribute("placeholder", "Enter secret code...");
   triggerInput.style.position = "absolute";
-  triggerInput.style.top = "-50px"; 
+  triggerInput.style.top = "-50px";
   document.body.appendChild(triggerInput);
 
   triggerInput.addEventListener("change", () => {
@@ -129,7 +130,7 @@ async function adminLogin() {
     const result = await response.json();
     if (response.ok) {
       sessionStorage.setItem("adminToken", result.token);
-      window.location.href = "video.html"; 
+      window.location.href = "video.html";
     } else {
       alert("Invalid admin credentials.");
     }
@@ -187,7 +188,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Handle file upload & send to Cloudflare
-  document.getElementById("videoUpload")?.addEventListener("change", handleVideoUpload);
+  document
+    .getElementById("videoUpload")
+    ?.addEventListener("change", handleVideoUpload);
 
   //  Load videos on page load
   loadVideos();
@@ -200,20 +203,24 @@ async function handleVideoUpload(event) {
 
   let title = prompt("Enter video title:");
   let description = prompt("Enter video description:");
-  if (!title || !description) return alert("Title and description are required!");
+  if (!title || !description)
+    return alert("Title and description are required!");
 
   let formData = new FormData();
   formData.append("file", file);
   formData.append("title", title);
 
   try {
-    let response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/stream`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
-      },
-      body: formData,
-    });
+    let response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/stream`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
+        },
+        body: formData,
+      }
+    );
 
     let result = await response.json();
     if (result.success) {
@@ -232,7 +239,11 @@ async function saveVideoToDatabase(title, description, videoId) {
     let response = await fetch("http://localhost:5000/api/upload-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, video_url: `https://watch.cloudflarestream.com/${videoId}` }),
+      body: JSON.stringify({
+        title,
+        description,
+        video_url: `https://watch.cloudflarestream.com/${videoId}`,
+      }),
     });
 
     let result = await response.json();
@@ -289,10 +300,85 @@ function postComment(inputElement, videoId) {
   const text = inputElement.value.trim();
   if (!text) return;
 
-  const commentContainer = inputElement.closest(".video-box").querySelector(".comments");
+  const commentContainer = inputElement
+    .closest(".video-box")
+    .querySelector(".comments");
   const commentDiv = document.createElement("div");
   commentDiv.className = "comment";
   commentDiv.textContent = text;
   commentContainer.appendChild(commentDiv);
   inputElement.value = "";
 }
+const totalVideos = 260; // Number of videos (v001 to v258)
+
+function loadVideos() {
+  const videoContainer = document.getElementById("videoContainer");
+
+  for (let i = 1; i <= totalVideos; i++) {
+    const videoId = `v${String(i).padStart(3, "0")}`; // Generate video ID (e.g., v001, v002)
+    const videoSrc = `${videoId}.mp4`; // Video file path
+    const description = `Video ${i}: Description for ${videoId}`; // Sample description
+
+    const videoBox = document.createElement("div");
+    videoBox.className = "video-box";
+    videoBox.innerHTML = `
+            <video controls src="${videoSrc}"></video>
+            <p class="description">${description}</p> 
+            <div class="comment-box">
+                <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this)">
+                <button onclick="handleCommentButton(this)">➡️</button>
+            </div>
+            <div class="comments"></div>
+        `;
+    videoContainer.appendChild(videoBox);
+  }
+}
+
+function handleComment(event, inputElement) {
+  if (event.key === "Enter") {
+    postComment(inputElement);
+  }
+}
+
+function handleCommentButton(buttonElement) {
+  const inputElement = buttonElement.previousElementSibling;
+  postComment(inputElement);
+}
+
+function postComment(inputElement) {
+  const text = inputElement.value.trim();
+  if (!text) return;
+
+  const commentContainer = inputElement
+    .closest(".video-box")
+    .querySelector(".comments");
+  const commentDiv = document.createElement("div");
+  commentDiv.className = "comment";
+  commentDiv.innerHTML = `${text} <button onclick="replyToComment(this)">↩️ Reply</button>`;
+  commentContainer.appendChild(commentDiv);
+
+  inputElement.value = "";
+}
+
+function replyToComment(button) {
+  const replyInput = document.createElement("input");
+  replyInput.placeholder = "Reply...";
+  replyInput.onkeypress = function (event) {
+    if (event.key === "Enter") {
+      const replyText = replyInput.value.trim();
+      if (!replyText) return;
+
+      const replyDiv = document.createElement("div");
+      replyDiv.className = "comment reply-box";
+      replyDiv.textContent = replyText;
+
+      button.parentNode.appendChild(replyDiv);
+      replyInput.remove();
+    }
+  };
+  button.parentNode.appendChild(replyInput);
+  replyInput.focus();
+}
+
+// Load videos on page load
+window.onload = loadVideos;

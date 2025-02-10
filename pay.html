@@ -5,180 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
 
-        body {
-            background-color: #f9f4ef;
-            color: #5c1212;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            height: 40vh;
-        }
+body {
+    background: url('visa-card-image.png') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
 
-        nav {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 1rem;
-            background-color: #fff;
-            box-shadow: 0px 2px 5px rgba(2, 214, 91, 0.1);
-        }
+/* Header Styling */
+nav {
+    width: 90%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    position: relative;
+    top: -60px;
+}
 
-        nav a {
-            text-decoration: none;
-            color: #5c1212;
-            font-weight: bold;
-        }
+nav h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    font-style: italic;
+    line-height: 0.8;
+}
 
-        nav a:hover {
-            color: #d74444;
-        }
+/* Trust Badges Styling */
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-bottom: 15px;
+}
 
-        /* Redish Shape at the top of the page */
-        .redish-container-top {
-            background-color: #f9f4ef;
-            position: relative;
-            height: 100vh;
-            clip-path: polygon(0% 5%, 5% 0%, 15% 10%, 5% 20%, 0% 100%, 100% 100%, 90% 90%, 80% 80%, 95% 60%, 100% 20%, 100% 0%, 0% 0%);
-            z-index: -1;
-        }
+.footer-links a {
+    text-decoration: none;
+    color: yellow;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
 
-       
-        .footer {
-            background-color: #5c1212; /* Redish color */
-            color: #fff;
-            padding: 2rem 1rem;
-            text-align: center;
-            position: relative;
-            width: 100%;
-        }
+.footer-links a:hover {
+    color: #0072ff;
+}
 
-        .footer::before {
-            content: "";
-            position: absolute;
-            top: -20px;
-            left: 0;
-            right: 0;
-            height: 40px;
-            background-color: #f9f4ef;
-            border-radius: 50%;
-        }
+/* Payment Form */
+.newsletter {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 30px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+}
 
-        .footer-links {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-        }
+.newsletter label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    display: block;
+    margin-bottom: 15px;
+}
 
-        .footer-links a {
-            text-decoration: none;
-            color: #fff;
-            margin: 0.5rem 1rem;
-            font-weight: bold;
-        }
+.newsletter input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    outline: none;
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
+.newsletter input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
 
-        .newsletter {
-            margin-bottom: 1.5rem;
-        }
+.newsletter button {
+    width: 100%;
+    background: #00c6ff;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
 
-        .newsletter input[type="email"] {
-            padding: 0.5rem;
-            width: 200px;
-            border: none;
-            border-radius: 5px;
-            margin-right: 0.5rem;
-        }
+.newsletter button:hover {
+    background: #0072ff;
+}
 
-        .newsletter button {
-            background-color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-weight: bold;
-            color: #5c1212;
-        }
+/* Green Button */
+.green-button {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 30px;
+    transition: background 0.3s ease;
+}
 
-        .newsletter button:hover {
-            background-color: #d74444;
-            color: #fff;
-        }
+.green-button:hover {
+    background: linear-gradient(to right, #0072ff, #021B79);
+}
 
-        .paypal-button {
-            margin-top: 1rem;
-        }
+/* Main Footer */
+.main-footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 0.9rem;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
 
-        .paypal-button img {
-            width: 150px;
-        }
+.main-footer a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 5px;
+}
 
-        .helcim-button a {
-            display: inline-flex;
-            align-items: center;
-            background-color: #4B9CD3;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-        }
+.main-footer a:hover {
+    text-decoration: underline;
+    color: #ffd700;
+}
 
-        .helcim-button img {
-            height: 30px;
-            margin-left: 10px;
-        }
 
-        /* Main Footer */
-        .main-footer {
-            background-color: #003366;
-            color: white;
-            text-align: center;
-            padding: 20px 10px;
-            font-size: 0.9rem;
-            width: 100%;
-            position: relative;
-        }
-
-        .main-footer a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 0 5px;
-        }
-
-        .main-footer a:hover {
-            text-decoration: underline;
-            color: #ffd700;
-        } /* Green Button for Sign In */
-        .green-button {
-            background-color: #4CAF50; /* Green */
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin: 20px auto;
-            transition: background-color 0.3s ease;
-        }
-
-        .green-button:hover {
-            background-color: #45a049; /* Slightly darker green */
-        }
     </style>
 </head>
 <body>
@@ -194,7 +182,7 @@
         <div class="footer-links">
             <a href="#">Safe</a>
             <a href="#">Secured</a>
-            <a href="#">Trustable</a>
+            <a href="#">Trusted</a>
         </div>
 
         <div class="newsletter">

@@ -9,13 +9,58 @@ const nodemailer = require("nodemailer");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+/*async function createConnectedAccount() {
+    try {
+        const account = await stripe.accounts.create({
+            type: "express",  // Use "standard" if you want the recipient to control payouts
+            country: "us",  // Change to your country
+            email: "olwenyjohn87@gmail.com",  // Replace with recipient’s email
+            capabilities: {
+                transfers: { requested: true }  // Enable fund transfers
+            }
+        });
+
+        console.log("Connected Account Created:", account.id);
+    } catch (error) {
+        console.error(" Error Creating Connected Account:", error);
+    }
+}
+
+createConnectedAccount();
+async function addBankAccount() {
+  try {
+  const connectedAccountId = process.env.STRIPE_CONNECTED_ACCOUNT_ID; 
+      const bankAccount = await stripe.accounts.createExternalAccount(
+        connectedAccountId,
+          {
+              external_account: {
+                  object: "bank_account",
+                  country: "US", // Change to your country
+                  currency: "usd",
+                  account_holder_name: "John Doe",
+                  account_holder_type: "individual", // or "company"
+                  routing_number: "110000000", // Use test routing number
+                  account_number: "000123456789", // Use test account number
+              }
+          }
+      );
+
+      console.log("Bank Account Added:", bankAccount.id);
+  } catch (error) {
+      console.error("Error Adding Bank Account:", error);
+  }
+}
+
+addBankAccount();*/
+
 const app = express();
 app.use(cors());
+
 app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
   async (req, res) => {
-    console.log(" Webhook received at /webhook/stripe");
+    console.log("📡 Webhook received at /webhook/stripe");
 
     let event;
     try {
@@ -26,28 +71,46 @@ app.post(
       );
       console.log(" Webhook Verified:", event.type);
     } catch (err) {
-      console.error(" Webhook Signature Verification Failed:", err.message);
+      console.error("Webhook Signature Verification Failed:", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const email = session.customer_email;
+      const payment_id = session.payment_intent;
+      const amount = session.amount_total / 100; // Convert to dollars
+      const currency = session.currency;
+
+      // Generate OTP
       const otp = generateOTP();
+      console.log(`Sending OTP: ${otp} to ${email}`);
 
-      console.log(` Sending OTP: ${otp} to ${email}`);
-
+      // Store OTP in Database
       db.query(
         "INSERT INTO user_access (email, otp) VALUES (?, ?) ON DUPLICATE KEY UPDATE otp = ?",
         [email, otp, otp],
         (err) => {
           if (err) {
-            console.error(" Database Error:", err);
+            console.error("Database Error:", err);
             return res.status(500).send("Database Error");
           }
-          console.log(" OTP stored in database:", otp);
+          console.log("OTP stored in database:", otp);
           sendOTPEmail(email, otp);
-          console.log(" OTP Email Sent to", email);
+          console.log("OTP Email Sent to", email);
+        }
+      );
+
+      // Store Transaction Details in Database
+      db.query(
+        "INSERT INTO transactions (payment_id, email, amount, currency, status) VALUES (?, ?, ?, ?, ?)",
+        [payment_id, email, amount, currency, "successful"],
+        (err) => {
+          if (err) {
+            console.error(" Transaction Database Error:", err);
+          } else {
+            console.log(" Transaction Recorded in Database:", payment_id);
+          }
         }
       );
     } else {
@@ -57,6 +120,7 @@ app.post(
     res.json({ received: true });
   }
 );
+
 app.use(bodyParser.json());
 app.use(express.json());
 
@@ -148,6 +212,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 
   try {
+    const connectedAccountId = process.env.STRIPE_CONNECTED_ACCOUNT_ID;
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -157,16 +222,21 @@ app.post("/api/create-checkout-session", async (req, res) => {
           price_data: {
             currency: "usd",
             product_data: { name: "Lifetime Video Access" },
-            unit_amount: 1000, // $10.00
+            unit_amount: 100, // $1.00
           },
           quantity: 1,
         },
       ],
+      payment_intent_data: {
+        transfer_data: {
+          destination: connectedAccountId,
+        },
+      },
       success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `http://localhost:5000/payment-cancelled`,
     });
 
-    console.log(" Created Checkout Session:", session.id, "URL:", session.url);
+    console.log("Created Checkout Session:", session.id, "URL:", session.url);
     res.json({ id: session.id, url: session.url });
   } catch (error) {
     console.error("Stripe Error:", error);
@@ -174,12 +244,12 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 });
 
-//  Success Page Route
+// Success Page Route
 app.get("/payment-success", (req, res) => {
   res.send(`
         <h2> Payment Successful!</h2>
         <p>Thank you for your purchase.</p>
-        <a href="/">Go back to Home</a>
+        <a href="http://127.0.0.1:5500/sign.html">Click to Watch Now </a>
     `);
 });
 
@@ -280,6 +350,57 @@ app.post("/api/admin/reset-password", async (req, res) => {
     }
   );
 });
+app.use(express.json());  
+app.use(express.urlencoded({ extended: true })); 
+
+// Route to Serve the Password Reset Page
+app.get("/reset-password/:token", (req, res) => {
+  res.send(`
+      <h2>Reset Your Password</h2>
+      <form action="/reset-password/${req.params.token}" method="POST">
+          <label for="new-password">New Password:</label>
+          <input type="password" id="new-password" name="password" required>
+          <button type="submit">Reset Password</button>
+      </form>
+  `);
+});
+
+//  Route to Process the Password Reset
+app.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password) {
+      return res.status(400).send(" Password is required.");
+  }
+
+  try {
+      //  Verify the token
+      const decoded = jwt.verify(token, SECRET_KEY);
+      const email = decoded.email;
+
+      console.log(" Token Verified for:", email);
+
+      //  Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 5);
+
+      // Update password in database
+      db.query("UPDATE admin SET password = ? WHERE email = ?", 
+          [hashedPassword, email], 
+          (err, result) => {
+              if (err) {
+                  console.error(" Database Error:", err);
+                  return res.status(500).send("Error updating password");
+              }
+              res.send("<h2> Password Reset Successful!</h2><p>You can now <a href='http://127.0.0.1:5500/sign.html'>Sign In</a></p>");
+          }
+      );
+  } catch (err) {
+      console.error(" Invalid Token:", err);
+      res.status(400).send(" Invalid or expired token. Request a new password reset.");
+  }
+});
+
 
 //  Middleware to Verify Admin Authentication
 function verifyAdminToken(req, res, next) {

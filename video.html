@@ -16,7 +16,7 @@
         color: #333;
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        min-height: 100vh; /* Ensure the body takes up the full viewport height */
       }
       header {
         background-color: #003366;
@@ -25,13 +25,12 @@
         text-align: center;
       }
       .upload-btn {
-        display: none;
         background-color: rgb(120, 120, 17);
         border: none;
         padding: 10px 100px;
         font-size: 18px;
         cursor: pointer;
-        margin: 20px auto;
+        margin: 20px;
         border-radius: 10px;
       }
       .video-container {
@@ -39,7 +38,7 @@
         flex-wrap: wrap;
         justify-content: center;
         padding: 20px;
-        flex-grow: 1;
+        flex-grow: 1; /* Allow video container to grow and push footer to the bottom */
       }
       .video-box {
         background: white;
@@ -49,9 +48,8 @@
         width: 300px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
-      iframe {
+      video {
         width: 100%;
-        height: 180px;
         border-radius: 5px;
       }
       .description {
@@ -73,6 +71,19 @@
         cursor: pointer;
         font-size: 18px;
       }
+      .comments {
+        text-align: left;
+        margin-top: 5px;
+      }
+      .comment {
+        background: #eee;
+        padding: 5px;
+        border-radius: 5px;
+        margin: 3px 0;
+      }
+      .reply-box {
+        margin-left: 20px;
+      }
       .main-footer {
         background-color: #003366;
         color: white;
@@ -81,120 +92,56 @@
         font-size: 0.9rem;
         margin-top: 30px;
       }
+
       .main-footer a {
         color: #ffcc00;
         text-decoration: none;
         font-weight: bold;
         margin: 0 5px;
       }
+
       .main-footer a:hover {
         text-decoration: underline;
         color: #ffd700;
       }
+
       .main-footer p {
         margin: 10px 0;
       }
+
       .main-footer p a {
         display: inline-block;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
     </style>
   </head>
   <body>
     <header>
-      <h1>Tracking Videos and PDFs Platform</h1>
+      <h1>Tracking Videos and PDF's Platform</h1>
     </header>
-    <button class="upload-btn" onclick="verifyAdmin()">Upload Video</button>
-    <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(event)">
+    <!-- Upload button (Visible only to admins) -->
+    <button id="uploadBtn" class="upload-btn">Upload Video</button>
+    <input
+      type="file"
+      id="videoUpload"
+      accept="video/*"
+      style="display: none"
+    />
     <div class="video-container" id="videoContainer"></div>
 
-    <script>
-        function verifyAdmin() {
-            let adminCode = prompt("Enter Admin Code:");
-            if (adminCode === "260260") {
-                document.getElementById('videoUpload').click();
-            } else {
-                alert("Incorrect Admin Code!");
-            }
-        }
-        
-        function handleVideoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            let description = prompt("Enter video description:");
-            if (!description) description = "No description provided.";
-            
-            const videoURL = URL.createObjectURL(file);
-            
-            const videoBox = document.createElement("div");
-            videoBox.className = "video-box";
-            videoBox.innerHTML = `
-                <video controls src="${videoURL}"></video>
-                <p class="description">${description}</p>
-                <div class="comment-box">
-                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this)">
-                    <button onclick="handleCommentButton(this)">➡️</button>
-                </div>
-                <div class="comments"></div>
-            `;
-            document.getElementById("videoContainer").appendChild(videoBox);
-        }
-        
-        function handleComment(event, inputElement) {
-            if (event.key === "Enter") {
-                postComment(inputElement);
-            }
-        }
-        
-        function handleCommentButton(buttonElement) {
-            const inputElement = buttonElement.previousElementSibling;
-            postComment(inputElement);
-        }
-        
-        function postComment(inputElement) {
-            const text = inputElement.value.trim();
-            if (!text) return;
-            
-            const commentContainer = inputElement.closest(".video-box").querySelector(".comments");
-            const commentDiv = document.createElement("div");
-            commentDiv.className = "comment";
-            commentDiv.innerHTML = `${text} <button onclick="replyToComment(this)">↩️ Reply</button>`;
-            commentContainer.appendChild(commentDiv);
-            
-            inputElement.value = "";
-        }
-        
-        function replyToComment(button) {
-            const replyInput = document.createElement("input");
-            replyInput.placeholder = "Reply...";
-            replyInput.onkeypress = function(event) {
-                if (event.key === "Enter") {
-                    const replyText = replyInput.value.trim();
-                    if (!replyText) return;
-                    
-                    const replyDiv = document.createElement("div");
-                    replyDiv.className = "comment reply-box";
-                    replyDiv.textContent = replyText;
-                    
-                    button.parentNode.appendChild(replyDiv);
-                    replyInput.remove();
-                }
-            };
-            button.parentNode.appendChild(replyInput);
-            replyInput.focus();
-        }
-    </script>
-
-   <!-- Footer -->
-   <footer class="main-footer">
-    <p>&copy; 2025 Track260. All rights reserved.</p>
-    <p>
-        <a href="pay.html">Pay</a> | 
-        <a href="index.html">Back Page</a> | 
+    <!-- Footer -->
+    <footer class="main-footer">
+      <p>&copy; 2025 Track260. All rights reserved.</p>
+      <p>
+        <a href="Pay.html">Pay</a> | <a href="index.html">Back Page</a> |
         <a href="sign.html">Watch</a>
       </p>
     </footer>
-
     <script src="scripts.js"></script>
   </body>
 </html>

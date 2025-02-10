@@ -32,6 +32,16 @@
         background-position: center;
         background-repeat: no-repeat;
       }
+      .form-box {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: left;
+        max-width: 400px;
+        width: 100%;
+        color: #333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
 
       .form-box {
         background-color: rgba(255, 255, 255, 0.9);
@@ -103,11 +113,31 @@
         background-color: #003366;
         color: white;
         text-align: center;
-        padding: 20px 10px;
+        padding: 15px 10px;
         font-size: 0.9rem;
-        margin-top: 30px;
+        width: 100%;
+        flex-shrink: 0;
+        position: absolute;
+        bottom: 0;
       }
+      /* Footer Links in Yellow */
+      .main-footer a {
+        color: yellow;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 5px;
+      }
+      /* Ensure Page Fits Any Device Without Scroll */
+      @media (max-width: 600px) {
+        .auth-container {
+          padding: 10px;
+          background-size: cover;
+        }
 
+        .form-box {
+          max-width: 90%;
+        }
+      }
       /* ✅ Hide Admin Login by Default */
       #admin-login {
         display: none;
