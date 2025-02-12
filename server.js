@@ -60,7 +60,7 @@ app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
   async (req, res) => {
-    console.log("📡 Webhook received at /webhook/stripe");
+    console.log(" Webhook received at /webhook/stripe");
 
     let event;
     try {
@@ -232,8 +232,8 @@ app.post("/api/create-checkout-session", async (req, res) => {
           destination: connectedAccountId,
         },
       },
-      success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5000/payment-cancelled`,
+      success_url: `https://track260.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://track260.onrender.com/payment-cancelled`,
     });
 
     console.log("Created Checkout Session:", session.id, "URL:", session.url);
@@ -342,7 +342,7 @@ app.post("/api/admin/reset-password", async (req, res) => {
         from: process.env.EMAIL_USER,
         to: email,
         subject: "Admin Password Reset",
-        text: `Click this link to reset your password: http://localhost:5000/reset-password/${resetToken}`,
+        text: `Click this link to reset your password: https://track260.onrender.com/reset-password/${resetToken}`,
       };
 
       await transporter.sendMail(mailOptions);
