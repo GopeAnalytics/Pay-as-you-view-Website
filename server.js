@@ -8,11 +8,7 @@ const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-app.use(cors({
-    origin: "https://trucksimply.com",
-    methods: "GET,POST",
-    credentials: true
-}));
+
 
 /*async function createConnectedAccount() {
     try {
@@ -60,7 +56,11 @@ addBankAccount();*/
 
 const app = express();
 app.use(cors());
-
+app.use(cors({
+  origin: "https://trucksimply.com",
+  methods: "GET,POST",
+  credentials: true
+}));
 app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
