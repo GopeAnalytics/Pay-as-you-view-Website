@@ -250,7 +250,7 @@ app.get("/payment-success", (req, res) => {
   res.send(`
         <h2> Payment Successful!</h2>
         <p>Thank you for your purchase.</p>
-        <a href="http://127.0.0.1:5500/sign.html">Click to Watch Now </a>
+        <a href="https://trucksimply.com/sign.html">Click to Watch Now </a>
     `);
 });
 
@@ -393,7 +393,7 @@ app.post("/reset-password/:token", async (req, res) => {
                   console.error(" Database Error:", err);
                   return res.status(500).send("Error updating password");
               }
-              res.send("<h2> Password Reset Successful!</h2><p>You can now <a href='http://127.0.0.1:5500/sign.html'>Sign In</a></p>");
+              res.send("<h2> Password Reset Successful!</h2><p>You can now <a href='https://trucksimply.com//sign.html'>Sign In</a></p>");
           }
       );
   } catch (err) {
