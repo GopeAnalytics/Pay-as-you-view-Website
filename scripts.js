@@ -28,7 +28,7 @@ async function processPayment() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/create-checkout-session",
+      "https://track260.onrender.com/api/create-checkout-session",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +61,7 @@ async function verifySignIn() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/signin", {
+    const response = await fetch("https://track260.onrender.com/api/signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
@@ -121,7 +121,7 @@ async function adminLogin() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/admin/login", {
+    const response = await fetch("https://track260.onrender.com/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -150,7 +150,7 @@ async function resetAdminPassword() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/admin/reset-password",
+      "https://track260.onrender.com/api/admin/reset-password",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -236,7 +236,7 @@ async function handleVideoUpload(event) {
 //  Function to Save Video to Database
 async function saveVideoToDatabase(title, description, videoId) {
   try {
-    let response = await fetch("http://localhost:5000/api/upload-video", {
+    let response = await fetch("https://track260.onrender.com/api/upload-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -261,7 +261,7 @@ async function saveVideoToDatabase(title, description, videoId) {
 //  Function to Load Videos
 async function loadVideos() {
   try {
-    const response = await fetch("http://localhost:5000/api/videos");
+    const response = await fetch("https://track260.onrender.com/api/videos");
     const videos = await response.json();
 
     const container = document.getElementById("videoContainer");
