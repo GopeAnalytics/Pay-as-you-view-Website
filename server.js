@@ -351,18 +351,6 @@ app.post("/api/admin/reset-password", async (req, res) => {
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true })); 
 
-// Route to Serve the Password Reset Page
-app.get("/reset-password/:token", (req, res) => {
-  res.send(`
-      <h2>Reset Your Password</h2>
-      <form action="/reset-password/${req.params.token}" method="POST">
-          <label for="new-password">New Password:</label>
-          <input type="password" id="new-password" name="password" required>
-          <button type="submit">Reset Password</button>
-      </form>
-  `);
-});
-
 //  Route to Process the Password Reset
 app.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
