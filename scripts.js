@@ -49,6 +49,8 @@ async function processPayment() {
   }
 }
 
+//**Signing in Funcionalities */
+
 //  Function to Verify Sign-In (User)
 async function verifySignIn() {
   const email = document.getElementById("user-email").value.trim();
@@ -139,6 +141,7 @@ async function adminLogin() {
     alert("Error logging in.");
   }
 }
+//**Password Reset Functionalities */
 
 //  Function to Handle Admin Password Reset Request
 async function resetAdminPassword() {
@@ -169,6 +172,107 @@ async function resetAdminPassword() {
     alert("Error requesting password reset.");
   }
 }
+        const passwordInput = document.getElementById("new-password");
+        const confirmPasswordInput = document.getElementById("confirm-password");
+        const matchMessage = document.getElementById("match-message");
+        const updateButton = document.querySelector(".update-button");
+
+        const requirements = {
+            length: document.getElementById("length"),
+            uppercase: document.getElementById("uppercase"),
+            lowercase: document.getElementById("lowercase"),
+            number: document.getElementById("number"),
+            symbol: document.getElementById("symbol"),
+            previousCheck: document.getElementById("previous-check")
+        };
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            let valid = true;
+
+            if (password.length >= 12) {
+                requirements.length.classList.add("valid");
+            } else {
+                requirements.length.classList.remove("valid");
+                valid = false;
+            }
+
+            if (/[A-Z]/.test(password)) {
+                requirements.uppercase.classList.add("valid");
+            } else {
+                requirements.uppercase.classList.remove("valid");
+                valid = false;
+            }
+
+            if (/[a-z]/.test(password)) {
+                requirements.lowercase.classList.add("valid");
+            } else {
+                requirements.lowercase.classList.remove("valid");
+                valid = false;
+            }
+
+            if (/\d/.test(password)) {
+                requirements.number.classList.add("valid");
+            } else {
+                requirements.number.classList.remove("valid");
+                valid = false;
+            }
+
+            if (/[\W_]/.test(password)) {
+                requirements.symbol.classList.add("valid");
+            } else {
+                requirements.symbol.classList.remove("valid");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        function checkMatch() {
+            if (confirmPasswordInput.value === passwordInput.value && passwordInput.value.length > 0) {
+                matchMessage.textContent = "Passwords match";
+                matchMessage.classList.add("valid");
+                matchMessage.classList.remove("invalid");
+                return true;
+            } else {
+                matchMessage.textContent = "Passwords must match";
+                matchMessage.classList.add("invalid");
+                matchMessage.classList.remove("valid");
+                return false;
+            }
+        }
+
+        function updateButtonState() {
+            if (validatePassword() && checkMatch()) {
+                updateButton.disabled = false;
+            } else {
+                updateButton.disabled = true;
+            }
+        }
+
+        passwordInput.addEventListener("input", updateButtonState);
+        confirmPasswordInput.addEventListener("input", updateButtonState);
+
+        document.getElementById("reset-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const newPassword = passwordInput.value;
+            const token = window.location.pathname.split("/").pop();
+
+            const response = await fetch(`/reset-password/${token}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ password: newPassword })
+            });
+
+            const result = await response.text();
+            alert(result);
+            if (response.ok) {
+                window.location.href = "sign.html";
+            }
+        });
+
+
+//**Vidoe html functinalities**/
 
 const totalVideos = 1000; // Maximum number of videos
 const videos = []; // Store all the video data for filtering
@@ -315,4 +419,57 @@ function deleteComment(button, videoId) {
 
 // Load videos on page load
 window.onload = loadVideos;
+//Forms functionalities
 
+        async function getExistingPDFs() {
+            let existingPDFs = [];
+            for (let i = 1; i <= 1000; i++) { // Assume up to 1000 PDFs, adjust as needed
+                let pdfId = `p${String(i).padStart(3, '0')}`;
+                let pdfSrc = `${pdfId}.pdf`;
+                if (await pdfExists(pdfSrc)) {
+                    existingPDFs.push(pdfId);
+                } else {
+                    break;
+                }
+            }
+            return existingPDFs;
+        }
+
+        async function loadPDFs() {
+            const pdfContainer = document.getElementById('pdfContainer');
+            let pdfs = [];
+            let existingPDFs = await getExistingPDFs();
+
+            for (let pdfId of existingPDFs) {
+                let pdfDescription = localStorage.getItem(pdfId) || "";
+                if (!pdfDescription) {
+                    pdfDescription = prompt(`Enter description for ${pdfId}`, `Description for ${pdfId}`);
+                    if (pdfDescription) {
+                        localStorage.setItem(pdfId, pdfDescription);
+                    }
+                }
+                pdfs.push({ id: pdfId, description: pdfDescription });
+            }
+
+            pdfs.forEach(pdf => {
+                const pdfBox = document.createElement('div');
+                pdfBox.className = 'pdf-box';
+                pdfBox.innerHTML = `
+                    <iframe src="${pdf.id}.pdf#toolbar=0"></iframe>
+                    <p>${pdf.description}</p>
+                `;
+                pdfContainer.appendChild(pdfBox);
+            });
+        }
+
+        async function pdfExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        window.onload = loadPDFs;
+    

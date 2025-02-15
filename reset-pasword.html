@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f4f4;
+        }
+
+        .reset-container {
+            background: #F2F5FE;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .reset-container img {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .password-requirements {
+            text-align: left;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            color: red;
+        }
+
+        .requirement.valid {
+            color: green;
+        }
+
+        .requirement::before {
+            content: "❌";
+            margin-right: 5px;
+        }
+
+        .requirement.valid::before {
+            content: "✅";
+        }
+
+        .match-message {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .match-message.valid {
+            color: green;
+        }
+
+        .match-message.invalid {
+            color: red;
+        }
+
+        .update-button {
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .update-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="reset-container">
+        <img src="logo.jpeg" alt="Logo"> 
+        <h2>Reset Password</h2>
+
+        <form id="reset-form">
+            <div class="input-group">
+                <label for="new-password">Desired Password</label>
+                <input type="password" id="new-password" required>
+                <div class="password-requirements">
+                    <p class="requirement" id="length">At least 12 characters</p>
+                    <p class="requirement" id="uppercase">At least one uppercase letter</p>
+                    <p class="requirement" id="lowercase">At least one lowercase letter</p>
+                    <p class="requirement" id="number">At least one number</p>
+                    <p class="requirement" id="symbol">At least one symbol (@, #, $, etc.)</p>
+                    <p class="requirement" id="previous-check">Must not be the same as the previous password</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" required>
+                <p class="match-message invalid" id="match-message">Passwords must match</p>
+            </div>
+
+            <button type="submit" class="update-button" disabled>Update Password</button>
+        </form>
+    </div>
+    <script src="scripts.js"></script>   
+</body>
+</html>

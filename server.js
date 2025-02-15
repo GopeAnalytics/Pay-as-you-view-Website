@@ -368,38 +368,31 @@ app.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  if (!password) {
-      return res.status(400).send(" Password is required.");
-  }
-
   try {
-      //  Verify the token
       const decoded = jwt.verify(token, SECRET_KEY);
       const email = decoded.email;
 
-      console.log(" Token Verified for:", email);
-
-      //  Hash the new password
-      const hashedPassword = await bcrypt.hash(password, 5);
-
-      // Update password in database
-      db.query("UPDATE admin SET password = ? WHERE email = ?", 
-          [hashedPassword, email], 
-          (err, result) => {
-              if (err) {
-                  console.error(" Database Error:", err);
-                  return res.status(500).send("Error updating password");
-              }
-              res.send("<h2> Password Reset Successful!</h2><p>You can now <a href='https://trucksimply.com//sign.html'>Sign In</a></p>");
+      db.query("SELECT password FROM admin WHERE email = ?", [email], async (err, result) => {
+          if (err || result.length === 0) {
+              return res.status(400).send("Invalid request.");
           }
-      );
-  } catch (err) {
-      console.error(" Invalid Token:", err);
-      res.status(400).send(" Invalid or expired token. Request a new password reset.");
+
+          const oldPassword = result[0].password;
+          const isSameAsOld = await bcrypt.compare(password, oldPassword);
+          if (isSameAsOld) {
+              return res.status(400).send("New password cannot be the same as the old password.");
+          }
+
+          const hashedPassword = await bcrypt.hash(password, 10);
+          db.query("UPDATE admin SET password = ? WHERE email = ?", [hashedPassword, email], (err) => {
+              if (err) return res.status(500).send("Error updating password.");
+              res.send("Password reset successful. Redirecting...");
+          });
+      });
+  } catch {
+      res.status(400).send("Invalid or expired token.");
   }
 });
-
-
 //  Middleware to Verify Admin Authentication
 function verifyAdminToken(req, res, next) {
   const token = req.headers["authorization"];
