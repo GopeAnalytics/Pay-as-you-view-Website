@@ -207,7 +207,7 @@ async function sendOTPEmail(email, otp) {
   await transporter.sendMail(mailOptions);
   console.log(` OTP Sent to ${email}`);
 }
-//Strioe checkout
+//Stripe checkout
 app.post("/api/create-checkout-session", async (req, res) => {
   const { email } = req.body;
 
@@ -349,16 +349,10 @@ app.post("/api/admin/reset-password", async (req, res) => {
     }
   );
 });
-app.get("/reset-password/:token", (req, res) => {
-    const token = req.params.token;
+app.use(express.static(path.join(__dirname, "public")));
 
-    // Serve the reset-password.html file
-    res.sendFile(path.join(__dirname, "reset-password.html"), (err) => {
-        if (err) {
-            console.error("Error serving reset-password.html:", err);
-            res.status(500).send("Error loading the password reset page.");
-        }
-    });
+app.get("/reset-password/:token", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "reset-password.html"));
 });
 
 app.use(express.json());  
