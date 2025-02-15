@@ -62,70 +62,66 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
-app.post(
-  "/webhook/stripe",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    console.log(" Webhook received at /webhook/stripe");
+app.post("/webhook/stripe", express.raw({ type: "application/json" }), async (req, res) => {
+  console.log("Webhook received at /webhook/stripe");
 
-    let event;
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        req.headers["stripe-signature"],
-        endpointSecret
-      );
-      console.log(" Webhook Verified:", event.type);
-    } catch (err) {
-      console.error("Webhook Signature Verification Failed:", err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      const email = session.customer_email;
-      const payment_id = session.payment_intent;
-      const amount = session.amount_total / 100; // Convert to dollars
-      const currency = session.currency;
-
-      // Generate OTP
-      const otp = generateOTP();
-      console.log(`Sending OTP: ${otp} to ${email}`);
-
-      // Store OTP in Database
-      db.query(
-        "INSERT INTO user_access (email, otp) VALUES (?, ?) ON DUPLICATE KEY UPDATE otp = ?",
-        [email, otp, otp],
-        (err) => {
-          if (err) {
-            console.error("Database Error:", err);
-            return res.status(500).send("Database Error");
-          }
-          console.log("OTP stored in database:", otp);
-          sendOTPEmail(email, otp);
-          console.log("OTP Email Sent to", email);
-        }
-      );
-
-      // Store Transaction Details in Database
-      db.query(
-        "INSERT INTO transactions (payment_id, email, amount, currency, status) VALUES (?, ?, ?, ?, ?)",
-        [payment_id, email, amount, currency, "successful"],
-        (err) => {
-          if (err) {
-            console.error(" Transaction Database Error:", err);
-          } else {
-            console.log(" Transaction Recorded in Database:", payment_id);
-          }
-        }
-      );
-    } else {
-      console.log(`Unhandled event type: ${event.type}`);
-    }
-
-    res.json({ received: true });
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      req.headers["stripe-signature"],
+      endpointSecret
+    );
+    console.log("Webhook Verified:", event.type);
+  } catch (err) {
+    console.error("Webhook Signature Verification Failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-);
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    const email = session.customer_email;
+    const payment_id = session.payment_intent;
+    const amount = session.amount_total / 100; // Convert to dollars
+    const currency = session.currency;
+
+    // Generate OTP
+    const otp = generateOTP();
+    console.log(`Sending OTP: ${otp} to ${email}`);
+
+    // Store OTP in MySQL
+    db.query(
+      "INSERT INTO user_access (email, otp) VALUES (?, ?) ON DUPLICATE KEY UPDATE otp = ?",
+      [email, otp, otp],
+      (err) => {
+        if (err) {
+          console.error("Database Error:", err);
+          return res.status(500).send("Database Error");
+        }
+        console.log("OTP stored in database:", otp);
+        sendOTPEmail(email, otp);
+        console.log("OTP Email Sent to", email);
+      }
+    );
+
+    // Store Transaction Details in Database
+    db.query(
+      "INSERT INTO transactions (payment_id, email, amount, currency, status) VALUES (?, ?, ?, ?, ?)",
+      [payment_id, email, amount, currency, "successful"],
+      (err) => {
+        if (err) {
+          console.error("Transaction Database Error:", err);
+        } else {
+          console.log("Transaction Recorded in Database:", payment_id);
+        }
+      }
+    );
+  } else {
+    console.log(`Unhandled event type: ${event.type}`);
+  }
+
+  res.json({ received: true });
+});
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -210,7 +206,7 @@ async function sendOTPEmail(email, otp) {
   await transporter.sendMail(mailOptions);
   console.log(` OTP Sent to ${email}`);
 }
-
+//Strioe checkout
 app.post("/api/create-checkout-session", async (req, res) => {
   const { email } = req.body;
 
@@ -219,7 +215,6 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 
   try {
-    const connectedAccountId = process.env.STRIPE_CONNECTED_ACCOUNT_ID;
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -234,11 +229,6 @@ app.post("/api/create-checkout-session", async (req, res) => {
           quantity: 1,
         },
       ],
-      payment_intent_data: {
-        transfer_data: {
-          destination: connectedAccountId,
-        },
-      },
       success_url: `https://track260.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://track260.onrender.com/payment-cancelled`,
     });
@@ -250,6 +240,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
     res.status(500).json({ message: "Stripe Payment Error" });
   }
 });
+
 
 // Success Page Route
 app.get("/payment-success", (req, res) => {
