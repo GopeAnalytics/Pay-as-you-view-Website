@@ -349,10 +349,18 @@ app.post("/api/admin/reset-password", async (req, res) => {
     }
   );
 });
+
+// Serve static files from 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
+// Route to serve the reset-password page
 app.get("/reset-password/:token", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "reset-password.html"));
+    res.sendFile(path.join(__dirname, "public", "reset-password.html"), (err) => {
+        if (err) {
+            console.error("Error loading reset-password.html:", err);
+            res.status(500).send("Error loading the password reset page.");
+        }
+    });
 });
 
 app.use(express.json());  
