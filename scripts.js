@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.text();
         alert(result);
         if (response.ok) {
-            window.location.href = "https://paynview.onrender.com/sign.html";
+            window.location.href = "https://trucksimply.com//sign.html";
         }
     });
 });

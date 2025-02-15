@@ -58,7 +58,7 @@ addBankAccount();*/
 const app = express();
 app.use(cors());
 app.use(cors({
-  origin: "https://paynview.onrender.com",
+  origin: "https://trucksimply.com/",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
