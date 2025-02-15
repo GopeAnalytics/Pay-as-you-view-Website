@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
+const path = require("path");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -340,14 +341,26 @@ app.post("/api/admin/reset-password", async (req, res) => {
         from: process.env.EMAIL_USER,
         to: email,
         subject: "Admin Password Reset",
-        text: `Click this link to reset your password: https://track260.onrender.com/reset-password/${resetToken}`,
-      };
-
+        text: `Click this link to reset your password: https://paynview.onrender.com/reset-password/${resetToken}`,
+    };
+    
       await transporter.sendMail(mailOptions);
       res.status(200).json({ message: "Password Reset Link Sent" });
     }
   );
 });
+app.get("/reset-password/:token", (req, res) => {
+    const token = req.params.token;
+
+    // Serve the reset-password.html file
+    res.sendFile(path.join(__dirname, "reset-password.html"), (err) => {
+        if (err) {
+            console.error("Error serving reset-password.html:", err);
+            res.status(500).send("Error loading the password reset page.");
+        }
+    });
+});
+
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true })); 
 

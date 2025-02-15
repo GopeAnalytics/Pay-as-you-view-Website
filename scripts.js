@@ -172,104 +172,110 @@ async function resetAdminPassword() {
     alert("Error requesting password reset.");
   }
 }
-        const passwordInput = document.getElementById("new-password");
-        const confirmPasswordInput = document.getElementById("confirm-password");
-        const matchMessage = document.getElementById("match-message");
-        const updateButton = document.querySelector(".update-button");
 
-        const requirements = {
-            length: document.getElementById("length"),
-            uppercase: document.getElementById("uppercase"),
-            lowercase: document.getElementById("lowercase"),
-            number: document.getElementById("number"),
-            symbol: document.getElementById("symbol"),
-            previousCheck: document.getElementById("previous-check")
-        };
+document.addEventListener("DOMContentLoaded", () => {
+    const passwordInput = document.getElementById("new-password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    const matchMessage = document.getElementById("match-message");
+    const updateButton = document.querySelector(".update-button");
 
-        function validatePassword() {
-            const password = passwordInput.value;
-            let valid = true;
+    const requirements = {
+        length: document.getElementById("length"),
+        uppercase: document.getElementById("uppercase"),
+        lowercase: document.getElementById("lowercase"),
+        number: document.getElementById("number"),
+        symbol: document.getElementById("symbol"),
+        previousCheck: document.getElementById("previous-check")
+    };
 
-            if (password.length >= 12) {
-                requirements.length.classList.add("valid");
-            } else {
-                requirements.length.classList.remove("valid");
-                valid = false;
-            }
+    function validatePassword() {
+        const password = passwordInput.value;
+        let valid = true;
 
-            if (/[A-Z]/.test(password)) {
-                requirements.uppercase.classList.add("valid");
-            } else {
-                requirements.uppercase.classList.remove("valid");
-                valid = false;
-            }
-
-            if (/[a-z]/.test(password)) {
-                requirements.lowercase.classList.add("valid");
-            } else {
-                requirements.lowercase.classList.remove("valid");
-                valid = false;
-            }
-
-            if (/\d/.test(password)) {
-                requirements.number.classList.add("valid");
-            } else {
-                requirements.number.classList.remove("valid");
-                valid = false;
-            }
-
-            if (/[\W_]/.test(password)) {
-                requirements.symbol.classList.add("valid");
-            } else {
-                requirements.symbol.classList.remove("valid");
-                valid = false;
-            }
-
-            return valid;
+        if (password.length >= 12) {
+            requirements.length.classList.add("valid");
+        } else {
+            requirements.length.classList.remove("valid");
+            valid = false;
         }
 
-        function checkMatch() {
-            if (confirmPasswordInput.value === passwordInput.value && passwordInput.value.length > 0) {
-                matchMessage.textContent = "Passwords match";
-                matchMessage.classList.add("valid");
-                matchMessage.classList.remove("invalid");
-                return true;
-            } else {
-                matchMessage.textContent = "Passwords must match";
-                matchMessage.classList.add("invalid");
-                matchMessage.classList.remove("valid");
-                return false;
-            }
+        if (/[A-Z]/.test(password)) {
+            requirements.uppercase.classList.add("valid");
+        } else {
+            requirements.uppercase.classList.remove("valid");
+            valid = false;
         }
 
-        function updateButtonState() {
-            if (validatePassword() && checkMatch()) {
-                updateButton.disabled = false;
-            } else {
-                updateButton.disabled = true;
-            }
+        if (/[a-z]/.test(password)) {
+            requirements.lowercase.classList.add("valid");
+        } else {
+            requirements.lowercase.classList.remove("valid");
+            valid = false;
         }
 
-        passwordInput.addEventListener("input", updateButtonState);
-        confirmPasswordInput.addEventListener("input", updateButtonState);
+        if (/\d/.test(password)) {
+            requirements.number.classList.add("valid");
+        } else {
+            requirements.number.classList.remove("valid");
+            valid = false;
+        }
 
-        document.getElementById("reset-form").addEventListener("submit", async function (event) {
-            event.preventDefault();
-            const newPassword = passwordInput.value;
-            const token = window.location.pathname.split("/").pop();
+        if (/[\W_]/.test(password)) {
+            requirements.symbol.classList.add("valid");
+        } else {
+            requirements.symbol.classList.remove("valid");
+            valid = false;
+        }
 
-            const response = await fetch(`/reset-password/${token}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password: newPassword })
-            });
+        return valid;
+    }
 
-            const result = await response.text();
-            alert(result);
-            if (response.ok) {
-                window.location.href = "sign.html";
-            }
+    function checkMatch() {
+        if (confirmPasswordInput.value === passwordInput.value && passwordInput.value.length > 0) {
+            matchMessage.textContent = "Passwords match";
+            matchMessage.classList.add("valid");
+            matchMessage.classList.remove("invalid");
+            return true;
+        } else {
+            matchMessage.textContent = "Passwords must match";
+            matchMessage.classList.add("invalid");
+            matchMessage.classList.remove("valid");
+            return false;
+        }
+    }
+
+    function updateButtonState() {
+        if (validatePassword() && checkMatch()) {
+            updateButton.disabled = false;
+        } else {
+            updateButton.disabled = true;
+        }
+    }
+
+    passwordInput.addEventListener("input", updateButtonState);
+    confirmPasswordInput.addEventListener("input", updateButtonState);
+
+    document.getElementById("reset-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const newPassword = passwordInput.value;
+
+        // Extract token from URL
+        const token = window.location.pathname.split("/").pop();
+
+        const response = await fetch(`https://track260.onrender.com/reset-password/${token}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: newPassword })
         });
+
+        const result = await response.text();
+        alert(result);
+        if (response.ok) {
+            window.location.href = "https://paynview.onrender.com/sign.html";
+        }
+    });
+});
+
 
 
 //**Vidoe html functinalities**/
