@@ -1,12 +1,12 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql2");
-const bcrypt = require("bcryptjs");
+const path = require("path");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const mysql = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const nodemailer = require("nodemailer");
-const path = require("path");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -311,89 +311,86 @@ app.post("/api/admin/login", (req, res) => {
   );
 });
 
-//  Admin Password Reset Request
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ Serve static files correctly
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Route to Serve Reset Password Page
+app.get("/reset-password/:token", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "reset-password.html"), (err) => {
+    if (err) {
+      console.error("Error loading reset-password.html:", err);
+      res.status(500).send("Error loading the password reset page.");
+    }
+  });
+});
+
+// ✅ Admin Password Reset Request
 app.post("/api/admin/reset-password", async (req, res) => {
   const { email } = req.body;
 
-  db.query(
-    "SELECT * FROM admin WHERE email = ?",
-    [email],
-    async (err, result) => {
-      if (err) return res.status(500).json({ message: "Database Error" });
+  db.query("SELECT * FROM admin WHERE email = ?", [email], async (err, result) => {
+    if (err) return res.status(500).json({ message: "Database Error" });
 
-      if (result.length === 0) {
-        return res.status(404).json({ message: "Admin Not Found" });
-      }
-
-      //  Generate Reset Token (Valid for 10 Minutes)
-      const resetToken = jwt.sign({ email }, SECRET_KEY, { expiresIn: "10m" });
-
-      //  Send Reset Link via Email
-      let transporter = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      let mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Admin Password Reset",
-        text: `Click this link to reset your password: https://paynview.onrender.com/reset-password/${resetToken}`,
-    };
-    
-      await transporter.sendMail(mailOptions);
-      res.status(200).json({ message: "Password Reset Link Sent" });
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Admin Not Found" });
     }
-  );
-});
 
-// Serve static files from 'public' folder
-app.use(express.static(path.join(__dirname, "public")));
+    // Generate Reset Token (Valid for 10 Minutes)
+    const resetToken = jwt.sign({ email }, SECRET_KEY, { expiresIn: "10m" });
 
-// Route to serve the reset-password page
-app.get("/reset-password/:token", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "reset-password.html"), (err) => {
-        if (err) {
-            console.error("Error loading reset-password.html:", err);
-            res.status(500).send("Error loading the password reset page.");
-        }
+    // Send Reset Link via Email
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Admin Password Reset",
+      text: `Click this link to reset your password: https://paynview.onrender.com/reset-password/${resetToken}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Password Reset Link Sent" });
+  });
 });
 
-app.use(express.json());  
-app.use(express.urlencoded({ extended: true })); 
-
-//  Route to Process the Password Reset
+// ✅ Route to Process the Password Reset
 app.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
   try {
-      const decoded = jwt.verify(token, SECRET_KEY);
-      const email = decoded.email;
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const email = decoded.email;
 
-      db.query("SELECT password FROM admin WHERE email = ?", [email], async (err, result) => {
-          if (err || result.length === 0) {
-              return res.status(400).send("Invalid request.");
-          }
+    db.query("SELECT password FROM admin WHERE email = ?", [email], async (err, result) => {
+      if (err || result.length === 0) {
+        return res.status(400).send("Invalid request.");
+      }
 
-          const oldPassword = result[0].password;
-          const isSameAsOld = await bcrypt.compare(password, oldPassword);
-          if (isSameAsOld) {
-              return res.status(400).send("New password cannot be the same as the old password.");
-          }
+      const oldPassword = result[0].password;
+      const isSameAsOld = await bcrypt.compare(password, oldPassword);
+      if (isSameAsOld) {
+        return res.status(400).send("New password cannot be the same as the old password.");
+      }
 
-          const hashedPassword = await bcrypt.hash(password, 10);
-          db.query("UPDATE admin SET password = ? WHERE email = ?", [hashedPassword, email], (err) => {
-              if (err) return res.status(500).send("Error updating password.");
-              res.send("Password reset successful. Redirecting...");
-          });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      db.query("UPDATE admin SET password = ? WHERE email = ?", [hashedPassword, email], (err) => {
+        if (err) return res.status(500).send("Error updating password.");
+        res.send("Password reset successful. Redirecting...");
       });
+    });
   } catch {
-      res.status(400).send("Invalid or expired token.");
+    res.status(400).send("Invalid or expired token.");
   }
 });
 //  Middleware to Verify Admin Authentication
