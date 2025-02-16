@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .slideshow-container {
+            position: relative;
+            max-width: 800px;
+            margin: 30px auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            background: white;
+        }
+
+        .slide {
+            display: none;
+        }
+
+        .slide img {
+            width: 100%;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            border-radius: 50%;
+            user-select: none;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .dots {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .dots span {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .active, .dots span:hover {
+            background-color: #717171;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 2cm;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            background-color: rgb(183, 209, 17);
+            border: 1px solid #d3d010;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 100px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #adcd55;
+        }
+
+        .main-footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+
+        .main-footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .main-footer a:hover {
+            text-decoration: underline;
+            color: #ffd700;
+        }
+
+        /* Disable right-click */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Presented Slides</h1>
+
+    <div class="slideshow-container" id="slideshowContainer">
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+    </div>
+
+    <div class="dots" id="dotsContainer"></div>
+
+    <script>
+        const imageCount = 1000;
+        let slideIndex = 1;
+        const slideshowContainer = document.getElementById('slideshowContainer');
+        const dotsContainer = document.getElementById('dotsContainer');
+
+        // Disable right-click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        async function imageExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function loadImages() {
+            for (let i = 1; i <= imageCount; i++) {
+                let imageId = `k${String(i).padStart(3, '0')}`;
+                let imageSrc = `${imageId}.png`;
+
+                if (await imageExists(imageSrc)) {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.className = 'slide';
+                    slideDiv.innerHTML = `<img src="${imageSrc}" alt="${imageId}">`;
+                    slideshowContainer.appendChild(slideDiv);
+
+                    const dotSpan = document.createElement('span');
+                    dotSpan.className = 'dot';
+                    dotSpan.onclick = function() { currentSlide(i) };
+                    dotsContainer.appendChild(dotSpan);
+                } else {
+                    break;
+                }
+            }
+            showSlides(slideIndex);
+        }
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }const timeoutDuration = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const signInPage = 'sign.html';
+    const expiredMessage = "Your session has expired. Log in again.";
+
+    // Check last activity on page load
+    function checkSession() {
+        const lastActivity = localStorage.getItem('lastActivity');
+        const currentTime = new Date().getTime();
+        
+        // If no last activity recorded, it's the first visit or session expired
+        if (!lastActivity) {
+            redirectToSignIn();
+        } else if (currentTime - lastActivity > timeoutDuration) {
+            alert(expiredMessage);
+            redirectToSignIn();
+        } else {
+            resetTimer();
+        }
+    }
+
+    // Reset timer on user interaction
+    function resetTimer() {
+        localStorage.setItem('lastActivity', new Date().getTime());
+    }
+
+    // Redirect to sign-in page
+    function redirectToSignIn() {
+        localStorage.removeItem('lastActivity'); // Clear activity to force login
+        window.location.href = signInPage;
+    }
+
+    // Event listeners to detect user activity
+    window.onload = checkSession;
+    window.onclick = resetTimer;
+    window.onkeypress = resetTimer;
+    window.onmousemove = resetTimer;
+    window.onscroll = resetTimer;
+    window.onmousedown = resetTimer;
+    window.ontouchstart = resetTimer;
+
+        function showSlides(n) {
+            let slides = document.querySelectorAll('.slide');
+            let dots = document.querySelectorAll('.dot');
+
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+
+            slides.forEach((slide, index) => {
+                slide.style.display = (index + 1 === slideIndex) ? 'block' : 'none';
+            });
+
+            dots.forEach((dot, index) => {
+                dot.className = dot.className.replace(' active', '');
+                if (index + 1 === slideIndex) {
+                    dot.className += ' active';
+                }
+            });
+        }
+
+        window.onload = loadImages;
+    </script>
+
+    <div class="button-container">
+        <button onclick="window.location.href='fm.html'">Access PDF Forms</button>
+        <button onclick="window.location.href='video.html'">Access Video</button>
+    </div>
+
+    <footer class="main-footer">
+        <div class="button-container">
+            <button onclick="window.location.href='large.html'">Download More Documents</button>
+        </div>
+        <p>&copy; 2025 Track260. All rights reserved.</p>
+        <p>
+            <a href="pay.html">Pay</a> |
+            <a href="index.html">Back Page</a> |
+            <a href="sign.html">Watch</a>
+        </p>
+    </footer>
+</body>
+</html>

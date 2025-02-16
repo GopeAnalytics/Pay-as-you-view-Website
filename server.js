@@ -10,51 +10,6 @@ const bodyParser = require("body-parser");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-
-/*async function createConnectedAccount() {
-    try {
-        const account = await stripe.accounts.create({
-            type: "express",  // Use "standard" if you want the recipient to control payouts
-            country: "us",  // Change to your country
-            email: "olwenyjohn87@gmail.com",  // Replace with recipient’s email
-            capabilities: {
-                transfers: { requested: true }  // Enable fund transfers
-            }
-        });
-
-        console.log("Connected Account Created:", account.id);
-    } catch (error) {
-        console.error(" Error Creating Connected Account:", error);
-    }
-}
-
-createConnectedAccount();
-async function addBankAccount() {
-  try {
-  const connectedAccountId = process.env.STRIPE_CONNECTED_ACCOUNT_ID; 
-      const bankAccount = await stripe.accounts.createExternalAccount(
-        connectedAccountId,
-          {
-              external_account: {
-                  object: "bank_account",
-                  country: "US", // Change to your country
-                  currency: "usd",
-                  account_holder_name: "John Doe",
-                  account_holder_type: "individual", // or "company"
-                  routing_number: "110000000", // Use test routing number
-                  account_number: "000123456789", // Use test account number
-              }
-          }
-      );
-
-      console.log("Bank Account Added:", bankAccount.id);
-  } catch (error) {
-      console.error("Error Adding Bank Account:", error);
-  }
-}
-
-addBankAccount();*/
-
 const app = express();
 app.use(cors());
 app.use(cors({
