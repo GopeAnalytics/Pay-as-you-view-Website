@@ -180,7 +180,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
           price_data: {
             currency: "usd",
             product_data: { name: "Lifetime Video Access" },
-            unit_amount: 100, // $1.00
+            unit_amount: 1000, // $10.00
           },
           quantity: 1,
         },
