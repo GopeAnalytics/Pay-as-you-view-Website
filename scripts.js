@@ -1,16 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-  //  Payment Button Click
-  const payButton = document.getElementById("pay-btn");
-  if (payButton) {
-    payButton.addEventListener("click", () => processPayment());
-  }
+  //  Payment Button Click with Loading Animation
+const payButton = document.getElementById("pay-btn");
+if (payButton) {
+    payButton.addEventListener("click", () => {
+        const email = document.getElementById("email").value.trim();
+        if (!email) {
+            alert("Please enter your email to proceed.");
+            return;
+        }
+        startLoading(); // Start the loading animation
+        processPayment(email);
+    });
+}
 
-  //  Sign-In Button Click
-  const signInButton = document.getElementById("user-sign-in-btn");
-  if (signInButton) {
-    signInButton.addEventListener("click", () => verifySignIn());
-  }
+// Function to Start Loading Animation
+function startLoading() {
+    payButton.classList.add("loading");
+    document.getElementById("button-text").textContent = "Processing...";
+    document.getElementById("loading-spinner").style.display = "inline-block";
+    payButton.disabled = true;
+}
 
+// Function to Stop Loading Animation
+function stopLoading() {
+    payButton.classList.remove("loading");
+    document.getElementById("button-text").textContent = "Pay Now";
+    document.getElementById("loading-spinner").style.display = "none";
+    payButton.disabled = false;
+}
   //  Video Page - Load Videos
   if (window.location.pathname.includes("video.html")) {
     loadVideos();
@@ -18,70 +35,80 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 //  Function to Process Payment with Stripe
-async function processPayment() {
-  const email = document.getElementById("email").value.trim();
-
-  if (!email) {
-    alert("Please enter your email to proceed with the payment.");
-    return;
-  }
-
+async function processPayment(email) {
   try {
-    const response = await fetch(
-      "https://track260.onrender.com/api/create-checkout-session",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      const response = await fetch("https://track260.onrender.com/api/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+      });
+
+      const result = await response.json();
+
+      if (result.url) {
+          window.location.href = result.url; // Redirect to Stripe
+      } else {
+          throw new Error("Payment session creation failed.");
       }
-    );
-
-    const result = await response.json();
-
-    if (result.url) {
-      window.location.href = result.url;
-    } else {
-      alert("Payment session creation failed.");
-    }
   } catch (error) {
-    console.error("Payment Error:", error);
-    alert("Payment failed. Please try again.");
+      console.error("Payment Error:", error);
+      alert("Payment failed. Please try again.");
+      stopLoading(); // Stop loading animation if there's an error
   }
 }
 
 //**Signing in Funcionalities */
 
 //  Function to Verify Sign-In (User)
-async function verifySignIn() {
-  const email = document.getElementById("user-email").value.trim();
-  const otp = document.getElementById("user-otp").value.trim();
+document.addEventListener("DOMContentLoaded", () => {
+  const signInButton = document.getElementById("user-sign-in-btn");
+  if (signInButton) {
+      signInButton.addEventListener("click", async () => {
+          const email = document.getElementById("user-email").value.trim();
+          const otp = document.getElementById("user-otp").value.trim();
 
-  console.log("Sign-In Attempt:", email, otp);
-  if (!email || !otp) {
-    alert("Please enter your email and See Code.");
-    return;
+          if (!email || !otp) {
+              alert("Please enter your email and See Code.");
+              return;
+          }
+
+          // Start loading animation
+          signInButton.classList.add("loading");
+          document.getElementById("sign-in-text").textContent = "Processing...";
+          document.getElementById("sign-in-spinner").style.display = "inline-block";
+          signInButton.disabled = true;
+
+          try {
+              const response = await fetch("https://track260.onrender.com/api/signin", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ email, otp })
+              });
+
+              const result = await response.json();
+              if (response.ok) {
+                  sessionStorage.setItem("userEmail", email);
+                  window.location.href = "video.html";
+              } else {
+                  alert("Invalid See Code or Email.");
+                  resetButtonState();
+              }
+          } catch (error) {
+              console.error("Sign-In Error:", error);
+              alert("Error signing in.");
+              resetButtonState();
+          }
+      });
   }
 
-  try {
-    const response = await fetch("https://track260.onrender.com/api/signin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-    });
-
-    const result = await response.json();
-    console.log("Server Response:", result);
-    if (response.ok) {
-      sessionStorage.setItem("userEmail", email);
-      window.location.href = "video.html";
-    } else {
-      alert("Invalid See Code or Email.");
-    }
-  } catch (error) {
-    console.error("Sign-In Error:", error);
-    alert("Error signing in.");
+  function resetButtonState() {
+      const signInButton = document.getElementById("user-sign-in-btn");
+      signInButton.classList.remove("loading");
+      document.getElementById("sign-in-text").textContent = "Watch Now";
+      document.getElementById("sign-in-spinner").style.display = "none";
+      signInButton.disabled = false;
   }
-}
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   document
@@ -271,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.text();
         alert(result);
         if (response.ok) {
-            window.location.href = "https://trucksimply.com//sign.html";
+            window.location.href = "https://track260.onrender.com/sign.html";
         }
     });
 });

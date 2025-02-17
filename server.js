@@ -310,7 +310,7 @@ app.post("/api/admin/reset-password", async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Admin Password Reset",
-      text: `Click this link to reset your password: https://paynview.onrender.com/reset-pasword/${resetToken}`,
+      text: `Click this link to reset your password: https://trucksimply.com//reset-pasword/${resetToken}`,
     };
 
     await transporter.sendMail(mailOptions);
