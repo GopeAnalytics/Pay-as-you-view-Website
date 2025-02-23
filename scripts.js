@@ -37,7 +37,7 @@ function stopLoading() {
 //  Function to Process Payment with Stripe
 async function processPayment(email) {
   try {
-      const response = await fetch("https://track260.onrender.com/api/create-checkout-session", {
+      const response = await fetch("http://localhost:5000/api/create-checkout-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email })
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
           signInButton.disabled = true;
 
           try {
-              const response = await fetch("https://track260.onrender.com/api/signin", {
+              const response = await fetch("http://localhost:5000/api/signin", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ email, otp })
@@ -150,7 +150,7 @@ async function adminLogin() {
   }
 
   try {
-    const response = await fetch("https://track260.onrender.com/api/admin/login", {
+    const response = await fetch("http://localhost:5000/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -180,7 +180,7 @@ async function resetAdminPassword() {
 
   try {
     const response = await fetch(
-      "https://track260.onrender.com/api/admin/reset-password",
+      "http://localhost:5000/api/admin/reset-password",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Extract token from URL
         const token = window.location.pathname.split("/").pop();
 
-        const response = await fetch(`https://track260.onrender.com/reset-password/${token}`, {
+        const response = await fetch(`http://localhost:5000/reset-password/${token}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password: newPassword })
@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.text();
         alert(result);
         if (response.ok) {
-            window.location.href = "https://track260.onrender.com/sign.html";
+            window.location.href = "http://localhost:5000/sign.html";
         }
     });
 });

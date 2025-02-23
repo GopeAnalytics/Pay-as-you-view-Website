@@ -12,12 +12,12 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const app = express();
 app.use(cors());
-app.use(cors({
+/*app.use(cors({
   origin: "https://trucksimply.com",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
-}));
+}));*/
 app.post("/webhook/stripe", express.raw({ type: "application/json" }), async (req, res) => {
   console.log("Webhook received at /webhook/stripe");
 
@@ -81,6 +81,7 @@ app.post("/webhook/stripe", express.raw({ type: "application/json" }), async (re
 
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.static("public")); // Serve static files (HTML, CSS, JS)
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -100,6 +101,55 @@ db.connect((err) => {
   }
   console.log(" MySQL Connected");
 });
+// Fetch all videos
+app.get("/api/videos", (req, res) => {
+  db.query("SELECT * FROM videos", (err, results) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      res.json(results);
+  });
+});
+
+// Update video description (admin only)
+app.put("/api/videos/:id", (req, res) => {
+  const { id } = req.params;
+  const { description } = req.body;
+
+  db.query("UPDATE videos SET description = ? WHERE video_id = ?", [description, id], (err) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      res.json({ message: "Description updated" });
+  });
+});
+
+// Fetch comments for a video
+app.get("/api/comments/:videoId", (req, res) => {
+  const { videoId } = req.params;
+  db.query("SELECT * FROM comments WHERE video_id = ?", [videoId], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      res.json(results);
+  });
+});
+
+// Add a comment
+app.post("/api/comments/:videoId", (req, res) => {
+  const { videoId } = req.params;
+  const { text, user_email } = req.body;
+
+  db.query("INSERT INTO comments (video_id, text, user_email) VALUES (?, ?, ?)", [videoId, text, user_email], (err) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      res.json({ message: "Comment added" });
+  });
+});
+
+// Delete a comment (admin only)
+app.delete("/api/comments/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query("DELETE FROM comments WHERE id = ?", [id], (err) => {
+      if (err) return res.status(500).json({ error: "Database Error" });
+      res.json({ message: "Comment deleted" });
+  });
+});
+
 
 //  Admin Registration Route
 app.post("/api/admin/register", async (req, res) => {
@@ -185,8 +235,8 @@ app.post("/api/create-checkout-session", async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `https://track260.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://track260.onrender.com/payment-cancelled`,
+      success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:5000/payment-cancelled`,
     });
 
     console.log("Created Checkout Session:", session.id, "URL:", session.url);
@@ -310,7 +360,7 @@ app.post("/api/admin/reset-password", async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Admin Password Reset",
-      text: `Click this link to reset your password: https://trucksimply.com//reset-pasword/${resetToken}`,
+      text: `Click this link to reset your password: http://localhost:5000//reset-pasword/${resetToken}`,
     };
 
     await transporter.sendMail(mailOptions);
@@ -360,58 +410,6 @@ function verifyAdminToken(req, res, next) {
   });
 }
 
-//  Cloudflare API Credentials
-const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
-const CLOUDFLARE_API_KEY = process.env.CLOUDFLARE_API_KEY;
-
-//  Video Upload to Cloudflare
-app.post("/api/upload-video", async (req, res) => {
-  const { title, description } = req.body;
-
-  if (!title || !description) {
-    return res
-      .status(400)
-      .json({ message: "Title and description are required!" });
-  }
-
-  try {
-    let response = await axios.post(
-      `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/stream`,
-      { meta: { title: title } },
-      { headers: { Authorization: `Bearer ${CLOUDFLARE_API_KEY}` } }
-    );
-
-    if (response.data.success) {
-      const videoId = response.data.result.uid;
-
-      //  Store Video URL in Database
-      db.query(
-        "INSERT INTO videos (title, description, video_url) VALUES (?, ?, ?)",
-        [title, description, `https://watch.cloudflarestream.com/${videoId}`],
-        (err) => {
-          if (err) return res.status(500).json({ message: "Database Error" });
-          res
-            .status(200)
-            .json({ message: "Video Uploaded Successfully!", videoId });
-        }
-      );
-    } else {
-      res.status(500).json({ message: "Cloudflare Upload Failed" });
-    }
-  } catch (error) {
-    console.error("Cloudflare Upload Error:", error);
-    res.status(500).json({ message: "Cloudflare Upload Error" });
-  }
-});
-
-//  Retrieve All Videos
-app.get("/api/videos", (req, res) => {
-  db.query("SELECT * FROM videos", (err, results) => {
-    if (err) return res.status(500).json({ error: "Database Error" });
-
-    res.status(200).json(results);
-  });
-});
 
 //  Start Server
 app.listen(5000, () => console.log("Server Running on Port 5000"));

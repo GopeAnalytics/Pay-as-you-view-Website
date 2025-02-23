@@ -1,382 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Videos Platform</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-        header {
-            background-color: #003366;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            flex-direction: column;
-            align-items: center;
-        }
+      header {
+        background-color: #003366;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        .upload-btn {
-            background-color: rgb(120, 120, 17);
-            border: none;
-            padding: 10px 100px;
-            font-size: 18px;
-            cursor: pointer;
-            margin: 20px;
-            border-radius: 10px;
-        }
+      .upload-btn {
+        background-color: rgb(120, 120, 17);
+        border: none;
+        padding: 10px 100px;
+        font-size: 18px;
+        cursor: pointer;
+        margin: 20px;
+        border-radius: 10px;
+      }
 
-        .video-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-            flex-grow: 1;
-        }
+      .video-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+        flex-grow: 1;
+      }
 
-        .video-box {
-            background: white;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 10px;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+      .video-box {
+        background: white;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 10px;
+        width: 300px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
 
-        video {
-            width: 100%;
-            border-radius: 5px;
-        }
+      video {
+        width: 100%;
+        border-radius: 5px;
+      }
 
-        .description {
-            font-style: italic;
-            margin-top: 5px;
-        }
+      .description {
+        font-style: italic;
+        margin-top: 5px;
+      }
 
-        .comment-box {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-        }
+      .comment-box {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+      }
 
-        .comment-box input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            min-height: 40px;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
+      .comment-box input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        min-height: 40px;
+        border-radius: 5px;
+        margin-right: 5px;
+      }
 
-        .comment-box button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
+      .comment-box button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+      }
 
-        .comments {
-            text-align: left;
-            margin-top: 5px;
-        }
+      .comments {
+        text-align: left;
+        margin-top: 5px;
+      }
 
-        .comment {
-            background: #eee;
-            padding: 5px;
-            border-radius: 5px;
-            margin: 3px 0;
-            position: relative;
-        }
+      .comment {
+        background: #eee;
+        padding: 5px;
+        border-radius: 5px;
+        margin: 3px 0;
+        position: relative;
+      }
 
-        .reply-box {
-            margin-left: 20px;
-        }
+      .reply-box {
+        margin-left: 20px;
+      }
 
-        .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            color: red;
-        }
+      .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        color: red;
+      }
 
-        .main-footer {
-            background-color: #003366;
-            color: white;
-            text-align: center;
-            padding: 20px 10px;
-            font-size: 0.9rem;
-            margin-top: 30px;
-        }
+      .main-footer {
+        background-color: #003366;
+        color: white;
+        text-align: center;
+        padding: 20px 10px;
+        font-size: 0.9rem;
+        margin-top: 30px;
+      }
 
-        .main-footer a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 0 5px;
-        }
+      .main-footer a {
+        color: #ffcc00;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 5px;
+      }
 
-        .main-footer a:hover {
-            text-decoration: underline;
-            color: #ffd700;
-        }
+      .main-footer a:hover {
+        text-decoration: underline;
+        color: #ffd700;
+      }
 
-        .main-footer p {
-            margin: 10px 0;
-        }
+      .main-footer p {
+        margin: 10px 0;
+      }
 
-        .main-footer p a {
-            display: inline-block;
-        }
+      .main-footer p a {
+        display: inline-block;
+      }
 
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 2cm;
-            margin-top: 20px;
-        }
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 2cm;
+        margin-top: 20px;
+      }
 
-        .button-container button {
-            background-color: rgb(183, 98, 20);
-            border: 1px solid #4CAF50;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 50px;
-            transition: background-color 0.3s ease;
-        }
+      .button-container button {
+        background-color: rgb(183, 98, 20);
+        border: 1px solid #4caf50;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 50px;
+        transition: background-color 0.3s ease;
+      }
 
-        .button-container button:hover {
-            background-color: #66b366;
-        }
+      .button-container button:hover {
+        background-color: #66b366;
+      }
+      .logout-btn {
+    width: 33.3%;
+    background-color: #007bff; 
+    color: white;
+    font-size: 18px;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto; 
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #0056b3; 
+}
+ /* Style for the search bar */
+ .search-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .search-input {
+        width: 50%;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #003366;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #0056b3;
+    }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <header>
-        <h1>Videos Platform</h1>
-        <input type="text" id="search" placeholder="Search video..." oninput="filterResults()">
+        <div class="search-container">
+            <input 
+                type="text" 
+                id="search" 
+                class="search-input" 
+                placeholder="Search videos..."
+                oninput="filterResults()"
+            />
+        </div>
+        
     </header>
 
     <div class="video-container" id="videoContainer"></div>
 
     <div class="button-container">
-        <button onclick="window.location.href='pdf.html'">Access Slides</button>
-        <button onclick="window.location.href='fm.html'">Access PDF Forms</button>
+      <button onclick="window.location.href='pdf.html'">Access Slides</button>
+      <button onclick="window.location.href='fm.html'">Access PDF Forms</button>
     </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
 
     <!-- Footer -->
     <footer class="main-footer">
-        <p>&copy; 2025 Track260. All rights reserved.</p>
-        <p>
-            <a href="pay.html">Pay</a> |
-            <a href="index.html">Back Page</a> |
-            <a href="sign.html">Watch</a>
-        </p>
+      <p>&copy; 2025 Track260. All rights reserved.</p>
+      <p>
+        <a href="pay.html">Pay</a> | <a href="index.html">Back Page</a> |
+        <a href="sign.html">Watch</a>
+      </p>
     </footer>
 
     <script>
-        const totalVideos = 1000; // Maximum number of videos
-        const videos = []; // Store all the video data for filtering
-        const BASE_URL = 'http://localhost:5000/comments'; // Change to your server's URL
-        const commentsData = JSON.parse(localStorage.getItem('commentsData')) || {}; // Load stored comments data
+      document.addEventListener("DOMContentLoaded", async () => {
+    const userEmail = sessionStorage.getItem("userEmail");
 
-        // Function to check if a video exists
-        async function checkVideoExists(url) {
-            try {
-                let response = await fetch(url, { method: 'HEAD' });
-                return response.ok; // Returns true if the file exists
-            } catch (error) {
-                return false;
-            }
-        }
+    if (!userEmail) {
+        window.location.href = "sign.html"; // Redirect if not logged in
+        return;
+    }
 
-        // Function to load available videos
-        async function loadVideos() {
-            const videoContainer = document.getElementById('videoContainer');
-            for (let i = 1; i <= totalVideos; i++) {
-                let videoId = `v${String(i).padStart(3, '0')}`;
-                let videoSrc = `${videoId}.mp4`;
+    await loadVideos(); // Load videos when page loads
 
-                if (await checkVideoExists(videoSrc)) {
-                    const videoBox = document.createElement('div');
-                    videoBox.className = 'video-box';
-                    videoBox.setAttribute('data-id', videoId);
-                    videoBox.innerHTML = `
-                        <video controls controlsList="nodownload" oncontextmenu="return false;">
-                            <source src="${videoSrc}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <p class="description">${videoId}: Description for ${videoId}</p>
-                        <div class="comment-box">
-                            <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this, '${videoId}')">
-                            <button onclick="handleCommentButton(this, '${videoId}')">➡️</button>
-                        </div>
-                        <div class="comments"></div>
-                    `;
-                    videoContainer.appendChild(videoBox);
-                    videos.push({ videoId, videoBox });
+    document.getElementById("search").addEventListener("input", filterResults);
+});
 
-                    // Load comments from the server
-                    await loadCommentsFromServer(videoId);
-                }
-            }
-        }
+// Base API URL
+const BASE_URL = "http://localhost:5000";
 
-        // Function to filter the video list based on search query
-        function filterResults() {
-            const searchQuery = document.getElementById('search').value.toLowerCase();
-            videos.forEach(video => {
-                const videoBox = video.videoBox;
-                const description = videoBox.querySelector('.description').textContent.toLowerCase();
-                if (description.includes(searchQuery)) {
-                    videoBox.style.display = 'block';
-                } else {
-                    videoBox.style.display = 'none';
-                }
-            });
-        }
+// Load videos dynamically
+async function loadVideos() {
+    const videoContainer = document.getElementById("videoContainer");
+    videoContainer.innerHTML = ""; // Clear previous content
 
-        // Function to load comments from the server for a specific video
-        async function loadCommentsFromServer(videoId) {
-            try {
-                const response = await fetch(`${BASE_URL}/${videoId}`);
-                const commentsData = await response.json();
+    try {
+        const response = await fetch(`${BASE_URL}/api/videos`);
+        const videos = await response.json();
 
-                const commentContainer = document.querySelector(`[data-id="${videoId}"] .comments`);
-                commentsData.comments.forEach(comment => {
-                    const commentDiv = document.createElement('div');
-                    commentDiv.className = 'comment';
-                    if (comment.deleted) {
-                        commentDiv.innerHTML = 'This comment has been deleted.';
-                    } else {
-                        commentDiv.innerHTML = `${comment.text} <button onclick="replyToComment(this)">↩️ Reply</button><button class="delete-btn" onclick="deleteComment(this, '${videoId}')">⋮</button>`;
-                    }
-                    commentContainer.appendChild(commentDiv);
-                    comment.replies.forEach(reply => {
-                        const replyDiv = document.createElement('div');
-                        replyDiv.className = 'comment reply-box';
-                        if (reply.deleted) {
-                            replyDiv.innerHTML = 'This reply has been deleted.';
-                        } else {
-                            replyDiv.innerHTML = `${reply.text} <button class="delete-btn" onclick="deleteReply(this, '${videoId}', '${comment._id}')">⋮</button>`;
-                        }
-                        commentContainer.appendChild(replyDiv);
-                    });
-                });
-            } catch (err) {
-                console.error('Error loading comments', err);
-            }
-        }
+        videos.forEach((video) => {
+            const videoBox = document.createElement("div");
+            videoBox.className = "video-box";
+            videoBox.setAttribute("data-id", video.video_id);
 
-        // Function to handle comment submission on "Enter"
-        function handleComment(event, inputElement, videoId) {
-            if (event.key === "Enter") {
-                postComment(inputElement, videoId);
-            }
-        }const timeoutDuration = 10 * 60 * 1000; // 10 minutes in milliseconds
-    const signInPage = 'sign.html';
-    const expiredMessage = "Your session has expired. Log in again.";
+            videoBox.innerHTML = `
+                <video controls>
+                    <source src="${video.video_url}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <input type="text" class="description-input" value="${video.description}" 
+                    ${video.is_admin ? "" : "readonly"}>
+                ${video.is_admin ? `<button onclick="updateDescription('${video.video_id}')">Save</button>` : ""}
+                <div class="comment-box">
+                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, this, '${video.video_id}')">
+                    <button onclick="handleCommentButton(this, '${video.video_id}')">➡️</button>
+                </div>
+                <div class="comments"></div>
+            `;
+            videoContainer.appendChild(videoBox);
 
-    // Check last activity on page load
-    function checkSession() {
-        const lastActivity = localStorage.getItem('lastActivity');
-        const currentTime = new Date().getTime();
-        
-        // If no last activity recorded, it's the first visit or session expired
-        if (!lastActivity) {
-            redirectToSignIn();
-        } else if (currentTime - lastActivity > timeoutDuration) {
-            alert(expiredMessage);
-            redirectToSignIn();
+            loadComments(video.video_id); // Load comments for this video
+        });
+    } catch (error) {
+        console.error("Error loading videos:", error);
+    }
+}
+
+// Function to update video descriptions
+async function updateDescription(videoId) {
+    const newDescription = document.querySelector(`[data-id="${videoId}"] .description-input`).value;
+
+    try {
+        const response = await fetch(`${BASE_URL}/api/videos/${videoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ description: newDescription }),
+        });
+
+        if (response.ok) {
+            alert("Description updated successfully!");
         } else {
-            resetTimer();
+            alert("Failed to update description.");
         }
+    } catch (error) {
+        console.error("Error updating description:", error);
     }
+}
 
-    // Reset timer on user interaction
-    function resetTimer() {
-        localStorage.setItem('lastActivity', new Date().getTime());
-    }
+// Filter videos based on search input
+function filterResults() {
+    const searchQuery = document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".video-box").forEach((videoBox) => {
+        const description = videoBox.querySelector(".description-input").value.toLowerCase();
+        videoBox.style.display = description.includes(searchQuery) ? "block" : "none";
+    });
+}
 
-    // Redirect to sign-in page
-    function redirectToSignIn() {
-        localStorage.removeItem('lastActivity'); // Clear activity to force login
-        window.location.href = signInPage;
-    }
+// Load comments for a video
+async function loadComments(videoId) {
+    try {
+        const response = await fetch(`${BASE_URL}/api/comments/${videoId}`);
+        const comments = await response.json();
 
-    // Event listeners to detect user activity
-    window.onload = checkSession;
-    window.onclick = resetTimer;
-    window.onkeypress = resetTimer;
-    window.onmousemove = resetTimer;
-    window.onscroll = resetTimer;
-    window.onmousedown = resetTimer;
-    window.ontouchstart = resetTimer;
+        const commentContainer = document.querySelector(`[data-id="${videoId}"] .comments`);
+        commentContainer.innerHTML = ""; // Clear previous comments
 
-        // Function to handle comment submission on button click
-        function handleCommentButton(buttonElement, videoId) {
-            const inputElement = buttonElement.previousElementSibling;
-            postComment(inputElement, videoId);
-        }
-
-        // Function to post a comment
-        async function postComment(inputElement, videoId) {
-            const text = inputElement.value.trim();
-            if (!text) return;
-
-            const response = await fetch(`${BASE_URL}/${videoId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
-            });
-            const commentData = await response.json();
-
-            // Append the comment to the UI
-            const commentContainer = inputElement.closest(".video-box").querySelector(".comments");
+        comments.forEach((comment) => {
             const commentDiv = document.createElement("div");
             commentDiv.className = "comment";
-            commentDiv.innerHTML = `${text} <button onclick="replyToComment(this)">↩️ Reply</button><button class="delete-btn" onclick="deleteComment(this, '${videoId}')">⋮</button>`;
+            commentDiv.innerHTML = `
+                ${comment.text} 
+                <button onclick="replyToComment('${comment.id}', '${videoId}')">↩️ Reply</button>
+                ${comment.is_admin ? `<button onclick="deleteComment('${comment.id}', '${videoId}')">🗑️ Delete</button>` : ""}
+            `;
             commentContainer.appendChild(commentDiv);
+        });
+    } catch (error) {
+        console.error("Error loading comments:", error);
+    }
+}
 
-            inputElement.value = "";
+// Handle adding comments
+async function postComment(inputElement, videoId) {
+    const text = inputElement.value.trim();
+    if (!text) return;
+
+    try {
+        const response = await fetch(`${BASE_URL}/api/comments/${videoId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, user_email: sessionStorage.getItem("userEmail") }),
+        });
+
+        if (response.ok) {
+            loadComments(videoId);
+            inputElement.value = ""; // Clear input
         }
+    } catch (error) {
+        console.error("Error posting comment:", error);
+    }
+}
 
-        // Function to delete a comment
-        function deleteComment(button, videoId) {
-            if (confirm("Are you sure you want to delete this comment?")) {
-                const commentDiv = button.closest('.comment');
-                const commentText = commentDiv.innerText.split(" ⋮")[0];
-                fetch(`${BASE_URL}/${videoId}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: commentText })
-                });
+// Logout function
+function logout() {
+    sessionStorage.removeItem("userEmail");
+    window.location.href = "sign.html";
+}
 
-                commentDiv.innerHTML = "This comment has been deleted.";
-            }
-        }
 
-        // Load videos on page load
-        window.onload = loadVideos;
     </script>
-
-</body>
-
+    <script src="scripts.js"></script>
+  </body>
 </html>
